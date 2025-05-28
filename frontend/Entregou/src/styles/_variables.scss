@@ -1,0 +1,40 @@
+// Colors(Light Theme)
+$surface: #F6F6F6;
+$cards: #FFFFFF;
+$primary: #FE7E11;
+$secondary: #40A9FF;
+$text: #1F2A34;
+$text-faded: rgba(31, 42, 52, 0.75);
+
+// Colors(Dark Theme)
+$surface-dark: #1F2A34;
+$cards-dark: #293F53;
+$primary-dark: #FE7E11;
+$secondary-dark: #40A9FF;
+$text-dark: #FFFFFF;
+$text-faded-dark: rgba(255, 255, 255, 0.75);
+
+// Colors(Shared)
+$error-status: #F5222D;
+$success-status: #52C41A;
+$await-status: #FA541C;
+$disabled-status: #BFBFBF;
+
+//Effects
+$padding: 16px;
+$border-radius: 8px;
+$shadow: 4px 4px 0px #{$text};
+$shadow-big: 6px 6px 0px #{$text};
+$shadow-dark: 4px 4px 0px #{$text-dark};
+$shadow-big-dark: 6px 6px 0px #{$text-dark};
+// $border-cards: 3px solid #{$text}; only used if cards will be made manual
+
+// Font Sizes and Weights
+$font-default: 14px;
+$font-default-bold: 14px 500;
+$font-small: 12px;
+$font-small-bold: 12px 500;
+$font-big: 20px;
+$font-big-bold: 20px 500;
+$font-title: 32px 500;
+$font-title-big: 40px 500;
