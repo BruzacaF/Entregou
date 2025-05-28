@@ -32,7 +32,7 @@ O projeto visa oferecer soluções acessíveis para quem enfrenta dificuldades e
 - JPA (Hibernate)
 
 ### Banco de Dados:
-- PostgreSQL ou MySQL (relacional)
+- PostgreSQL
 
 ### Outros:
 - Algoritmo para cálculo de rotas otimizadas e distribuicao de coleta de produtos
