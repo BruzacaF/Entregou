@@ -1,16 +1,20 @@
 import { Component, model, OnInit } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { CommonModule } from '@angular/common';
-import { MatIconModule } from '@angular/material/icon';
-import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card';
 import { ThemeService } from './services/theme.service';
 import { inject } from '@angular/core';
-import {MatToolbarModule} from '@angular/material/toolbar';
+import { MatGridList, MatGridTile } from '@angular/material/grid-list';
+import { LoginFormComponent } from './login-form/login-form.component';
+import { MatCard,MatCardContent, MatCardTitle, MatCardHeader,MatCardActions, MatCardSubtitle } from '@angular/material/card';
+import { MatFormField, MatLabel } from '@angular/material/input';
+import { MatButton } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
+
+
+
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, CommonModule, MatIconModule, MatButtonModule, MatCardModule, MatToolbarModule],
+  imports: [RouterOutlet, MatGridList,MatGridTile, MatFormField,LoginFormComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })

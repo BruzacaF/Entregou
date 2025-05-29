@@ -1,20 +1,9 @@
-<div class="app-container">
-  <mat-toolbar class="app-toolbar">
-    <span>ENTREGOU!!</span>
-    <button mat-icon-button (click)="themeService.toggleTheme()" aria-label="Alternar modo escuro">
-      <mat-icon>{{ themeService.isDarkMode() ? 'light_mode' : 'dark_mode' }}</mat-icon>
-    </button>
-  </mat-toolbar>
+<mat-grid-list cols="2" rowHeight="100vh" class="app-grid" gutterSize="0px">
+  <mat-grid-tile colspan="1"class="image-tile">
+    
+  </mat-grid-tile>
+  <mat-grid-tile colspan="1" class="login-tile">
+    <app-login-form></app-login-form>
+  </mat-grid-tile>
 
-  <mat-card class="welcome-card">
-    <mat-card-header>
-      <mat-card-title>Bem-vindo ao Entregou!</mat-card-title>
-    </mat-card-header>
-    <mat-card-content>
-      <p>Entregou é uma plataforma de gerenciamento de entregas, com uma logistica de armazéns e frota distribuida.</p>
-      <p>Mais novidades em breve</p>
-    </mat-card-content>
-  </mat-card>
-</div>
-<!-- Rest of your app content  -->
-<!-- <router-outlet></router-outlet> -->
+</mat-grid-list>
