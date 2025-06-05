@@ -1,0 +1,38 @@
+@import '../../styles/variables.scss';
+
+
+.dashboard-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: $surface;
+
+
+
+    height: 100%;
+    width: 100%;
+
+    mat-drawer-container {
+        
+        width: 100%;
+        height: 100%;
+        
+
+        mat-drawer {
+            width: 250px;
+            background-color: $cards;
+            padding: $padding;
+            border-right: 3px solid $primary;
+            border-radius: 0;
+            
+        }
+
+        mat-drawer-content {
+            display: flex;
+            flex-direction: column;
+
+            padding: $padding calc($padding * 2);
+            width: calc(100% - 250px);
+        }
+    }
+}

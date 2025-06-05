@@ -1,0 +1,15 @@
+@import '../../styles/variables';
+
+.image-tile {
+    background: url('../../../public/resources/images/ruslan-mingazhov-d1H4zlLktU0-unsplash.jpg') no-repeat center center;
+    background-size: cover;
+    height: 100%;
+    width: 100%;
+
+}
+
+.login-tile {
+    background: $primary;
+    height: 100%;
+    width: 100%;
+}
