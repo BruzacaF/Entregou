@@ -3,8 +3,6 @@ import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { MatGridTile } from '@angular/material/grid-list';
-import { CardData } from '../../../../../public/resources/staticResources/fakeDataMap';
-import { fakeCardData } from '../../../../../public/resources/staticResources/fakeDataMap';
 
 
 @Component({
@@ -20,7 +18,7 @@ import { fakeCardData } from '../../../../../public/resources/staticResources/fa
 })
 export class MapCardsComponent {
 
-  cardData: CardData[] = fakeCardData;
+  
 
   constructor() {
     
