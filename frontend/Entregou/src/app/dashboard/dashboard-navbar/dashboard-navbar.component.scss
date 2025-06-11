@@ -1,0 +1,61 @@
+@import '../../../styles/variables.scss';
+
+.logo{
+    width: 100px;
+    height: 100px;
+    margin: 0 auto;
+    display: block;
+}
+
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: white;
+
+    mat-list{
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        
+
+        a {
+            font-size: $font-default;
+            color: $text;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: calc($padding / 2) calc($padding / 4);
+
+            transition: padding 0.3s ease-in-out;
+            
+            cursor: pointer;
+            &:hover {
+                padding: $padding / 2 $padding;
+                border-left: 3px solid $primary;
+                mat-icon {
+                    color: $primary;
+                }
+            }
+        }
+        
+    }
+
+}
+
+
+mat-divider {
+    border-top-color: $primary;
+    border-top: 3px solid $primary;
+}
+
+
+
+.isLinkActive {
+    border-left: 1px solid $primary;
+
+    mat-icon{
+        color : $primary;
+    }
+}

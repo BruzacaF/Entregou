@@ -1,0 +1,16 @@
+<div id="cards-container" class="cards-container">
+    <div class="cards-grid">
+        <div class="card" *ngFor="let card of cardData">
+            <div class="card-header">
+                <h3>Entrega #{{ card.id }}</h3>
+                <!-- <span class="status-badge" [ngClass]="'status-' + card.status">{{ getStatusLabel(card.status) }}</span> -->
+            </div>
+            <div class="card-body">
+                <p><strong>Motorista:</strong> {{ card.driver }}</p>
+                <p><strong>Partida:</strong> {{ card.partida }}</p>
+                <p><strong>Destino:</strong> {{ card.destino }}</p>
+                <p><strong>Localização:</strong> {{ card.localizacao.lat }}, {{ card.localizacao.long }}</p>
+            </div>
+        </div>
+    </div>
+</div>
