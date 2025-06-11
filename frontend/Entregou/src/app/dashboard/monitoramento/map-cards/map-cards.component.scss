@@ -1,0 +1,27 @@
+.cards-container {
+    display: flex;
+    flex-wrap: wrap;
+    
+    width: 100%;
+    height: auto; 
+
+    .cards-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        grid-gap: 16px;
+        width: 100%;
+        grid-auto-rows: min-content; // Added to fit content height
+        overflow-y: auto;
+
+        .card {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            height: fit-content;
+        }
+    }
+}
