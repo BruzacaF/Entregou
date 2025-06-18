@@ -1,9 +1,9 @@
 import { Routes } from '@angular/router';
-import { LoginFormComponent } from './login-form/login-form.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import {RelatoriosComponent} from './dashboard/relatorios/relatorios.component';
 import { LandingPageComponent } from './landing-page/landing-page.component';
 import { MonitoramentoComponent } from './dashboard/monitoramento/monitoramento.component';
+import { authGuard } from './guardRoutes/auth.guard';
 
 export const routes: Routes = [
   {
@@ -14,6 +14,7 @@ export const routes: Routes = [
   {
     path: 'dashboard',
     component: DashboardComponent,
+    canActivate: [authGuard], // Protege a rota do dashboard
     title: 'Dashboard - Entregou',
     children: [
       { path: '', redirectTo: 'monitoramento', pathMatch: 'full' }, // Rota padrão
@@ -22,5 +23,5 @@ export const routes: Routes = [
     
     ]
   },
-  { path: '**', redirectTo: '/login' }
+  { path: '**', redirectTo: '' }
 ];

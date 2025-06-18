@@ -1,32 +1,81 @@
-<mat-card>
-  <mat-card-header>
-    <mat-card-title class="login-title">Entrar</mat-card-title>
-    <mat-card-subtitle class="login-subtitle">Entre com seu usuário e senha</mat-card-subtitle>
-  </mat-card-header>
-  <mat-card-content>
-    <form>
-      <mat-form-field appearance="outline" class="full-width">
-        <mat-label>Email ou Usuário</mat-label>
-        <input matInput type="text" placeholder="Digite seu email ou usuário">
-        <mat-icon matSuffix>person</mat-icon>
-      </mat-form-field>
+<!-- login-form.component.html -->
+<div class="login-form-container">
+  <div class="login-card">
+    <div class="login-header">
+      <h1>Bem-vindo de volta!</h1>
+      <p>Entre com suas credenciais para acessar o sistema</p>
+    </div>
 
-      <mat-form-field appearance="outline" class="full-width">
-        <mat-label>Senha</mat-label>
-        <input matInput type="password" placeholder="Digite sua senha">
-        <mat-icon matSuffix>lock</mat-icon>
-      </mat-form-field>
-      <mat-card-actions>
-        <div class="login-actions">
-          <a mat-raised-button color="primary" type="submit" class="full-width button-login" routerLink="/dashboard/relatorios">
-            Entrar
-          </a>
-        </div>
-        <div class="login-links">
-          <a mat-button color="primary">Esqueceu a senha?</a>
-        </div>
-      </mat-card-actions>
+    <div class="login-content">
+      <form (submit)="onSubmit($event)" class="login-form">
 
-    </form>
-  </mat-card-content>
-</mat-card>
+        <!-- Campo Email -->
+        <div class="form-field">
+          <label for="email">Email</label>
+          <div class="input-container">
+            <input 
+              id="email"
+              type="text" 
+              placeholder="sample@example.com"
+              [value]="formData.email"
+              (input)="onInputChange($event,'email')"
+              (blur)="onFieldTouch('email')"
+              [class.error]="hasError('email')">
+            <mat-icon class="input-icon">person</mat-icon>
+          </div>
+
+            <div class="error-message">
+            <mat-icon class="error-icon" *ngIf="hasError('email')">error</mat-icon>
+            <span *ngIf="hasError('email')">{{ getError('email') }}</span>
+            </div>
+        </div>
+
+        <!-- Campo Senha -->
+        <div class="form-field">
+          <label for="password">Senha</label>
+          <div class="input-container">
+            <input 
+              id="password"
+              [type]="hidePassword ? 'password' : 'text'"
+              placeholder="Digite sua senha"
+              [value]="formData.password"
+              (input)="onInputChange( $event, 'password')"
+              (blur)="onFieldTouch('password')"
+              [class.error]="hasError('password')">
+            <button 
+              type="button"
+              class="password-toggle"
+              (click)="togglePasswordVisibility()"
+              [attr.aria-label]="'Hide password'"
+              [attr.aria-pressed]="hidePassword">
+              <mat-icon>{{ hidePassword ? 'visibility' : 'visibility_off' }}</mat-icon>
+            </button>
+          </div>
+          <div class="error-message" *ngIf="hasError('password')">
+            <mat-icon class="error-icon">error</mat-icon>
+            <span>{{ getError('password') }}</span>
+          </div>
+        </div>
+
+        <!-- Botões de Ação -->
+        <div class="form-actions">
+          <button 
+            type="submit"
+            class="submit-button"
+            [disabled]="!isFormValid || isLoading">
+            <mat-icon class="button-icon" *ngIf="isLoading">hourglass_empty</mat-icon>
+            <span>{{ isLoading ? 'Entrando...' : 'Entrar' }}</span>
+          </button>
+
+        </div>
+
+        <!-- Links Adicionais -->
+        <div class="form-links">
+          <a href="#" class="forgot-password">Esqueceu a senha?</a>
+          <a href="#" class="create-account">Criar uma conta</a>
+        </div>
+
+      </form>
+    </div>
+  </div>
+</div>
