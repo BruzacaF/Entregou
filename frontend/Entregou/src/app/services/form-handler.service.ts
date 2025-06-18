@@ -1,4 +1,4 @@
-import { Injectable, signal } from '@angular/core';
+import { computed, Injectable, signal } from '@angular/core';
 
 // Interface para os dados do formulário
 export interface LoginFormData {
@@ -9,23 +9,25 @@ export interface LoginFormData {
 // Interface para validação de formulário
 export interface FormValidation {
   isValid: boolean;
-  errors: { [key: string]: string };
+   errors: Partial<{ [K in keyof LoginFormData]: string }>;
 }
 
 @Injectable({
   providedIn: 'root'
 })
+
 export class FormHandlerService {
-  
-  // Signals para armazenar os dados do formulário
+ 
   private _formData = signal<LoginFormData>({ email: '', password: '' });
-  private _formErrors = signal<{ [key: string]: string }>({});
+
+  private _formErrors = signal<Partial<Record<keyof LoginFormData, string>>>({});
   private _isFormValid = signal(false);
 
   // Propriedades readonly para acesso externo
   formData = this._formData.asReadonly();
   formErrors = this._formErrors.asReadonly();
-  isFormValid = this._isFormValid.asReadonly();
+  isFormValid = this._isFormValid.asReadonly(); 
+ 
 
   constructor() { }
 
@@ -35,8 +37,9 @@ export class FormHandlerService {
   updateFormData(field: keyof LoginFormData, value: string): void {
     const currentData = this._formData();
     const updatedData = { ...currentData, [field]: value };
-    this._formData.set(updatedData);
+    const sanitizedValue = field === 'email' ? this.sanitizeInput(value) : value;
     
+    this._formData.set(updatedData);
     // Valida automaticamente após cada mudança
     this.validateForm();
   }
@@ -45,7 +48,10 @@ export class FormHandlerService {
    * Define todos os dados do formulário de uma vez
    */
   setFormData(data: LoginFormData): void {
-    this._formData.set(data);
+    this._formData.set({
+      email: this.sanitizeInput(data.email),
+      password: data.password // Senha não deve ser sanitizada
+    });
     this.validateForm();
   }
 
@@ -53,24 +59,25 @@ export class FormHandlerService {
    * Valida todos os campos do formulário
    */
   validateForm(): FormValidation {
-    const data = this._formData();
-    const errors: { [key: string]: string } = {};
+
+    const {email, password} = this._formData();
+    const errors: Partial<Record<keyof LoginFormData, string>> = {};
 
     // Validação do email/usuário
-    if (!data.email || data.email.trim() === '') {
+    if (!email || email.trim() === '') {
       errors['email'] = 'Email ou usuário é obrigatório';
-    } else if (data.email.includes('@') && !this.isValidEmail(data.email)) {
+    } else if (email.includes('@') && !this.isValidEmail(email)) {
       errors['email'] = 'Formato de email inválido';
-    } else if (data.email.trim().length < 3) {
+    } else if (email.trim().length < 3) {
       errors['email'] = 'Email ou usuário deve ter pelo menos 3 caracteres';
     }
 
     // Validação da senha
-    if (!data.password || data.password.trim() === '') {
+    if (!password || password.trim() === '') {
       errors['password'] = 'Senha é obrigatória';
-    } else if (data.password.length < 6) {
+    } else if (password.length < 6) {
       errors['password'] = 'Senha deve ter pelo menos 6 caracteres';
-    } else if (data.password.length > 50) {
+    } else if (password.length > 50) {
       errors['password'] = 'Senha não pode ter mais de 50 caracteres';
     }
 
@@ -83,38 +90,21 @@ export class FormHandlerService {
     return { isValid, errors };
   }
 
-  /**
-   * Valida um campo específico
-   */
+  /*Valida um campo específico*/
   validateField(field: keyof LoginFormData): string | null {
-    const data = this._formData();
-    const value = data[field];
+    const value = this._formData()[field];
 
-    switch (field) {
-      case 'email':
-        if (!value || value.trim() === '') {
-          return 'Email ou usuário é obrigatório';
-        }
-        if (value.includes('@') && !this.isValidEmail(value)) {
-          return 'Formato de email inválido';
-        }
-        if (value.trim().length < 3) {
-          return 'Email ou usuário deve ter pelo menos 3 caracteres';
-        }
-        break;
+    if (field === 'email') {
+    if (!value.trim()) return 'Email ou usuário é obrigatório';
+    if (value.includes('@') && !this.isValidEmail(value)) return 'Formato de email inválido';
+    if (value.trim().length < 3) return 'Email ou usuário deve ter pelo menos 3 caracteres';
+  }
 
-      case 'password':
-        if (!value || value.trim() === '') {
-          return 'Senha é obrigatória';
-        }
-        if (value.length < 6) {
-          return 'Senha deve ter pelo menos 6 caracteres';
-        }
-        if (value.length > 50) {
-          return 'Senha não pode ter mais de 50 caracteres';
-        }
-        break;
-    }
+  if (field === 'password') {
+    if (!value.trim()) return 'Senha é obrigatória';
+    if (value.length < 6) return 'Senha deve ter pelo menos 6 caracteres';
+    if (value.length > 50) return 'Senha não pode ter mais de 50 caracteres';
+  }
 
     return null;
   }
@@ -203,7 +193,7 @@ export class FormHandlerService {
    * Sanitiza entrada (remove espaços, converte para lowercase apenas o email)
    */
   private sanitizeInput(input: string): string {
-    return input.trim().toLowerCase();
+    return input.trim();
   }
 
   /**
