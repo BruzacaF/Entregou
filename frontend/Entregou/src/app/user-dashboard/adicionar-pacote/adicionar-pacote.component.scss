@@ -1,0 +1,114 @@
+@import '../../../styles/variables';
+
+
+.adicionar-pacote-form{
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    width: 100%;
+    max-width: 600px;
+    margin: auto;
+
+    border: 2px solid $text;
+    border-radius: $border-radius;
+    box-shadow: $shadow;
+    padding: $padding;
+
+    .form-box{
+        display: flex;
+        gap: 10px;
+
+        .form-field {
+            flex: 1;
+            
+        }
+    }
+
+    .header {
+        display: flex;
+        flex-direction: column;
+        align-items:flex-start;
+        justify-content: center;
+        
+        padding-bottom: calc($padding / 2);
+
+        border-bottom: 1px solid $text-faded;
+
+        h1 {
+            font-size: $font-big;
+            font-weight: bold;
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: $padding;
+
+            
+        }
+
+        p {
+            font-size: 16px;
+            color: #666;
+        }
+    }
+    
+    .form {
+        display: flex;
+        flex-direction: column;
+        gap: $padding;
+
+        .form-field {
+        display: flex;
+        flex-direction: column;
+        gap: calc($padding / 2);
+
+        .form-field-label {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: calc($padding / 2);
+            color: #333;
+        }
+
+        textarea {
+            resize: none;
+            min-height: 100px;
+            padding: calc($padding / 4);
+
+        }
+    }
+
+        label {
+        font-weight: bold;
+        }
+    
+        input, select {
+        padding: 10px;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+        font-size: 16px;
+        }
+    }
+    
+    button {
+        padding: 10px;
+        background-color: #28a745;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: $padding;
+        font-size: 1rem;
+
+        mat-icon {
+            height: fill;
+        }
+    
+        &:hover {
+        background-color: #218838;
+        }
+    }
+}
