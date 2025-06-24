@@ -4,13 +4,19 @@ import { MatTableModule } from '@angular/material/table';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatChipsModule } from '@angular/material/chips';
+import { DatabaseService } from '../../services/database.service';
 
 export interface Pacote {
-  id: number;
+  id?: number;
   destinatario: string;
-  endereco_destino: string;
-  status: 'pendente' | 'em_transito' | 'entregue' | 'cancelado';
-  codigo_rastreamento: string;
+  remetente: string;
+  tipoPacote: string;
+  codigoRastreio: string | null;
+  descricaoConteudo: string;
+  prioridade: boolean;
+  endereco_destino?: string;
+  status?: 'pendente' | 'em_transito' | 'entregue' | 'cancelado';
+  codigo_rastreamento?: string;
 }
 
 @Component({
@@ -29,74 +35,86 @@ export interface Pacote {
 export class ListarPacoteComponent implements OnInit {
   // Signal para os pacotes
   private _pacotes = signal<Pacote[]>([]);
-
-  // Mock de pacotes - substitua isso por uma chamada real à API
-  private mockPacotes: Pacote[] = [
-    {
-      id: 11223344,
-      destinatario: 'João Silva',
-      endereco_destino: 'Rua A, 123',
-      status: 'entregue',
-      codigo_rastreamento: 'ABC123'
-    },
-    {
-      id: 22334455,
-      destinatario: 'Maria Oliveira',
-      endereco_destino: 'Avenida B, 456',
-      status: 'em_transito',
-      codigo_rastreamento: 'XYZ456'
-    },
-    {
-      id: 33445566,
-      destinatario: 'Carlos Souza',
-      endereco_destino: 'Travessa C, 789',
-      status: 'pendente',
-      codigo_rastreamento: 'LMN789'
-    },
-    {
-      id: 44556677,
-      destinatario: 'Ana Costa',
-      endereco_destino: 'Rua D, 101',
-      status: 'cancelado',
-      codigo_rastreamento: 'PQR101'
-    },
-    {
-      id: 55667788,
-      destinatario: 'Lucas Pereira',
-      endereco_destino: 'Avenida E, 202',
-      status: 'entregue',
-      codigo_rastreamento: 'STU202'
-    }
-    
-  ];
-
-  ngOnInit(): void {
-    this.loadPacotes();
-    console.log('Pacotes carregados:', this.pacotes);
-  }
-
-  private loadPacotes(): void {
-    this._pacotes.set(this.mockPacotes);
-  }
+  private _loading = signal<boolean>(false);
+  private _error = signal<string | null>(null);
 
   // Getter para usar no template (converte Signal para Array)
   get pacotes(): Pacote[] {
     return this._pacotes();
   }
 
-  // Colunas da tabela - DEVE corresponder às colunas do HTML
-  displayedColumns: string[] = [
-    'id',
-    'destino',
-    'status',
-    'destinatario',
-    'rastreamento',
-  ];
-
-  
-
-  constructor() {
-
+  get loading(): boolean {
+    return this._loading();
   }
 
+  get error(): string | null {
+    return this._error();
+  }
+
+  constructor(private databaseService: DatabaseService) {}
+
+  ngOnInit(): void {
+    this.carregarPacotes();
+  }
+
+  private carregarPacotes(): void {
+    this._loading.set(true);
+    this._error.set(null);
+
+    this.databaseService.listarMeusPacotes().subscribe({
+      next: (pacotes) => {
+        this._pacotes.set(pacotes);
+        this._loading.set(false);
+      },
+      error: (error) => {
+        console.error('Erro ao carregar pacotes:', error);
+        this._error.set('Erro ao carregar pacotes. Tente novamente.');
+        this._loading.set(false);
+      }
+    });
+  }
+
+  // Colunas da tabela - DEVE corresponder às colunas do HTML
+  displayedColumns: string[] = [
+    'destinatario',
+    'remetente',
+    'tipoPacote',
+    'codigoRastreio',
+    'descricaoConteudo',
+    'prioridade',
+  ];
+
+  // Método para recarregar os dados
+  recarregar(): void {
+    this.carregarPacotes();
+  }
+
+  // Métodos utilitários
+  getPrioridadeText(prioridade: boolean): string {
+    return prioridade ? 'Alta' : 'Normal';
+  }
+
+  getPrioridadeColor(prioridade: boolean): string {
+    return prioridade ? '#f44336' : '#4caf50';
+  }
+
+  getStatusColor(status?: string): string {
+    switch(status) {
+      case 'pendente': return '#ff9800';
+      case 'em_transito': return '#2196f3';
+      case 'entregue': return '#4caf50';
+      case 'cancelado': return '#f44336';
+      default: return '#757575';
+    }
+  }
+
+  getStatusText(status?: string): string {
+    switch(status) {
+      case 'pendente': return 'Pendente';
+      case 'em_transito': return 'Em Trânsito';
+      case 'entregue': return 'Entregue';
+      case 'cancelado': return 'Cancelado';
+      default: return 'N/A';
+    }
+  }
 }

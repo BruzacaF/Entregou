@@ -3,81 +3,141 @@
         <h1>Adicionar Pacote <mat-icon>add</mat-icon></h1>
         <p>Preencha os detalhes do pacote para adicionar uma nova entrega.</p>
     </div>
-    <form class="form">
+    <form class="form" (submit)="onSubmit($event)" novalidate>
+
+        <!-- Destinatário COM AUTOCOMPLETE -->
+        <div class="form-field">
+            <div class="form-field-label">
+                <mat-icon>person</mat-icon>
+                <label>Destinatário</label>
+            </div>
+            <input type="text" id="destinatario" name="destinatario" placeholder="Digite para quem é o pacote"
+                [value]="formData().destinatario || '' " (input)="onFieldChange($event, 'destinatario')"
+                (focus)="onDestinatarioFocus()" (blur)="onDestinatarioBlur()" [class.error]="hasError('destinatario')"
+                autocomplete="off">
+
+            <div class="loading-indicator" *ngIf="buscandoUsuarios()">
+                <mat-icon class="loading-icon">hourglass_empty</mat-icon>
+            </div>
+
+            <div class="suggestions-dropdown" *ngIf="mostrarSugestoes()">
+                <div class="suggestion-item" *ngFor="let usuario of usuarios()" (click)="selecionarUsuario(usuario)">
+                    <div class="usuario-info">
+                        <div class="usuario-nome">{{ usuario.nome }}</div>
+                        <div class="usuario-email">{{ usuario.email }}</div>
+                    </div>
+                    <mat-icon class="select-icon">person_add</mat-icon>
+                </div>
+
+                <!-- Nenhum resultado -->
+                <div class="no-results" *ngIf="usuarios().length === 0 && !buscandoUsuarios()">
+                    <mat-icon>search_off</mat-icon>
+                    <span>Nenhum usuário encontrado</span>
+                </div>
+            </div>
+
+            <div class="selected-user" *ngIf="usuarioSelecionado()">
+                <mat-icon>check_circle</mat-icon>
+                <span>{{ usuarioSelecionado()?.nome }} selecionado</span>
+                <button type="button" class="clear-selection" (click)="usuarioSelecionado.set(null)">
+                    <mat-icon>close</mat-icon>
+                </button>
+            </div>
+
+
+            <div class="error-message" *ngIf="hasError('destinatario')">
+                {{ getError('destinatario') }}
+            </div>
+
+
+
+
+        </div>
+
+
         <div class="form-field">
             <div class="form-field-label">
                 <mat-icon>inventory_2</mat-icon>
-                <label>Nome do Pacote</label>
+                <label>Tipo do Pacote</label>
             </div>
-            <input type="text" placeholder="Digite o nome do pacote">
+            <select name="tipoPacote" id="tipoPacote" [value]="formData().tipoPacote"
+                (change)="onFieldChange($event, 'tipoPacote')" (blur)="onFieldBlur('tipoPacote')"
+                [class.error]="hasError('tipoPacote')">
+                <option *ngFor="let tipo of tipoPacoteOptions" [value]="tipo">{{ tipo }}</option>
+            </select>
         </div>
         <div class="form-box">
             <div class="form-field">
                 <div class="form-field-label">
-                    <mat-icon>location_on</mat-icon>
-                    <label>CEP</label>
+                    <mat-icon>straighten</mat-icon>
+                    <label>Dimensões</label>
                 </div>
-                <input type="text" placeholder="Digite o CEP">
+                <input type="text" placeholder="Ex: 30x20x10" [value]="formData().dimensoes"
+                    (input)="onFieldChange($event, 'dimensoes')" (blur)="onFieldBlur('dimensoes')"
+                    [class.error]="hasError('dimensoes')">
             </div>
             <div class="form-field">
                 <div class="form-field-label">
                     <mat-icon>fitness_center</mat-icon>
-                    <label>Peso do pacote</label>
+                    <label>Peso (kg)</label>
                 </div>
-                <input type="text" placeholder="Digite o peso do pacote">
+                <input type="number" step="0.1" placeholder="Digite o peso em kg" min="0" [value]="formData().peso"
+                    (input)="onFieldChange($event, 'peso')" (blur)="onFieldBlur('peso')"
+                    [class.error]="hasError('peso')">
             </div>
         </div>
         <div class="form-box">
             <div class="form-field">
                 <div class="form-field-label">
-                    <mat-icon>south_america</mat-icon>
-                    <label>Estado</label>
+                    <mat-icon>attach_money</mat-icon>
+                    <label>Valor Declarado</label>
                 </div>
-                <input type="text" placeholder="Digite o estado">
-            </div>
-            <div class="form-field">
-                <div class="form-field-label">
-                    <mat-icon>location_city</mat-icon>
-                    <label>Cidade</label>
-                </div>
-                <input type="text" placeholder="Digite a cidade">
-            </div>
-        </div>
-        <div class="form-field">
-            <div class="form-field-label">
-                <mat-icon>home_work</mat-icon>
-                <label>Endereço de Entrega</label>
-            </div>
-            <input type="text" placeholder="Digite o endereço de entrega">
-        </div>
-        <div class="form-box">
-            <div class="form-field">
-                <div class="form-field-label">
-                    <mat-icon>calendar_today</mat-icon>
-                    <label>Data de Entrega</label>
-                </div>
-                <input type="date" placeholder="Selecione a data de entrega">
-            </div>
-            <div class="form-field">
-                <div class="form-field-label">
-                    <mat-icon>access_time</mat-icon>
-                    <label>Hora de Entrega</label>
-                </div>
-                <input type="time" placeholder="Selecione a hora de entrega">
+                <input type="number" step="1" placeholder="Digite o valor declarado" min="0"
+                    [value]="formData().valorDeclarado" (input)="onFieldChange($event, 'valorDeclarado')"
+                    (blur)="onFieldBlur('valorDeclarado')" [class.error]="hasError('valorDeclarado')">
             </div>
 
         </div>
         <div class="form-field">
             <div class="form-field-label">
                 <mat-icon>description</mat-icon>
-                <label>Descrição</label>
+                <label>Descrição do Conteúdo</label>
             </div>
-            <textarea placeholder="Digite a descrição do pacote"></textarea>
+            <textarea placeholder="Digite a descrição do conteúdo" [value]="formData().descricao"
+                (input)="onFieldChange($event, 'descricao')" (blur)="onFieldBlur('descricao')"
+                [class.error]="hasError('descricao')"></textarea>
         </div>
-        <button type="submit">
-            <mat-icon>add</mat-icon>
-            Adicionar Pacote
-        </button>
-    </form>
+        <div class="form-box">
+            <div class="form-field">
+                <div class="form-field-label">
+                    <mat-icon>package</mat-icon>
+                    <label>Tipo de Embalagem</label>
+                </div>
+                <select name="tipoEmbalagem" id="tipoEmbalagem" [value]="formData().tipoEmbalagem || ''"
+                    (change)="onFieldChange($event, 'tipoEmbalagem')" (blur)="onFieldBlur('tipoEmbalagem')"
+                    [class.error]="hasError('tipoEmbalagem')">
+                    <option value="" disabled>Selecione o tipo de embalagem</option>
+                    <option *ngFor="let tipo of tipoEmbalagemOptions" [value]="tipo">{{ tipo }}</option>
+                </select>
+            </div>
+            <div class="form-field">
+                <div class="form-field-label">
+                    <mat-icon>priority_high</mat-icon>
+                    <label>Prioridade</label>
+                </div>
+                <select name="prioridade" id="prioridade" [value]="formData().prioridade"
+                    (change)="onFieldChange($event, 'prioridade')" (blur)="onFieldBlur('prioridade')"
+                    [class.error]="hasError('prioridade')">
+                    <option *ngFor="let prioridade of prioridadeOptions" [value]="prioridade">{{ prioridade }}</option>
+                </select>
+            </div>
+        </div>
 
+        <button type="submit">
+            <mat-icon *ngIf="isLoading()">hourglass_empty</mat-icon>
+            <mat-icon *ngIf="!isLoading()">add</mat-icon>
+            {{ isLoading() ? 'Enviando...' : 'Adicionar Pacote' }}
+        </button>
+
+    </form>
 </div>

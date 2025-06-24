@@ -1,59 +1,99 @@
 <div class="listar-pacote">
-    <h1>Lista de Pacotes</h1>
-    <p>Todos os seus pacotes estão listados aqui.</p>
-    <mat-table [dataSource]="pacotes" class="pacotes-table">
-        <!-- ID Column -->
-        <ng-container matColumnDef="id">
-            <mat-header-cell *matHeaderCellDef>
-                ID
-            </mat-header-cell>
-            <mat-cell *matCellDef="let pacote">{{ pacote.id }}</mat-cell>
-        </ng-container>
+    <div class="header">
+        <h1>Lista de Pacotes</h1>
+        <p>Todos os seus pacotes estão listados aqui.</p>
+        
+        <button 
+            mat-raised-button 
+            color="primary" 
+            (click)="recarregar()" 
+            [disabled]="loading"
+            class="reload-btn">
+            <mat-icon>refresh</mat-icon>
+            {{ loading ? 'Carregando...' : 'Recarregar' }}
+        </button>
+    </div>
 
-        <!-- Destino Column -->
-        <ng-container matColumnDef="destino">
-            <mat-header-cell *matHeaderCellDef>
-                Destino
-            </mat-header-cell>
-            <mat-cell *matCellDef="let pacote" class="truncate-cell">
-                <span [title]="pacote.endereco_destino">{{ pacote.endereco_destino }}</span>
-            </mat-cell>
-        </ng-container>
+    <!-- Loading State -->
+    <div *ngIf="loading" class="loading-state">
+        <mat-icon class="loading-icon">hourglass_empty</mat-icon>
+        <p>Carregando pacotes...</p>
+    </div>
 
-        <!-- Status Column -->
-        <ng-container matColumnDef="status">
-            <mat-header-cell *matHeaderCellDef>
-              Status
-            </mat-header-cell>
-            <mat-cell *matCellDef="let pacote">
-                {{ pacote.status }}
-            </mat-cell>
-        </ng-container>
+    <!-- Error State -->
+    <div *ngIf="error && !loading" class="error-state">
+        <mat-icon class="error-icon">error</mat-icon>
+        <p>{{ error }}</p>
+        <button mat-button color="primary" (click)="recarregar()">
+            Tentar Novamente
+        </button>
+    </div>
 
+    <!-- Tabela de Pacotes -->
+    <mat-table 
+        *ngIf="!loading && !error" 
+        [dataSource]="pacotes" 
+        class="pacotes-table mat-elevation-8">
+        
         <!-- Destinatário Column -->
         <ng-container matColumnDef="destinatario">
-            <mat-header-cell *matHeaderCellDef>
-               Destinatário
-            </mat-header-cell>
+            <mat-header-cell *matHeaderCellDef>Destinatário</mat-header-cell>
             <mat-cell *matCellDef="let pacote" class="truncate-cell">
                 <span [title]="pacote.destinatario">{{ pacote.destinatario }}</span>
             </mat-cell>
         </ng-container>
 
-        <!-- Rastreamento Column -->
-        <ng-container matColumnDef="rastreamento">
-            <mat-header-cell *matHeaderCellDef>
-               Rastreamento
-            </mat-header-cell>
+        <!-- Remetente Column -->
+        <ng-container matColumnDef="remetente">
+            <mat-header-cell *matHeaderCellDef>Remetente</mat-header-cell>
             <mat-cell *matCellDef="let pacote" class="truncate-cell">
-                <span [title]="pacote.codigo_rastreamento">{{ pacote.codigo_rastreamento }}</span>
+                <span [title]="pacote.remetente">{{ pacote.remetente }}</span>
             </mat-cell>
         </ng-container>
 
+        <!-- Tipo Pacote Column -->
+        <ng-container matColumnDef="tipoPacote">
+            <mat-header-cell *matHeaderCellDef>Tipo</mat-header-cell>
+            <mat-cell *matCellDef="let pacote">
+                {{ pacote.tipoPacote }}
+            </mat-cell>
+        </ng-container>
+
+        <!-- Código Rastreio Column -->
+        <ng-container matColumnDef="codigoRastreio">
+            <mat-header-cell *matHeaderCellDef>Código Rastreio</mat-header-cell>
+            <mat-cell *matCellDef="let pacote" class="codigo-cell">
+                <span class="codigo-text" [title]="pacote.codigoRastreio || 'N/A'">
+                    {{ pacote.codigoRastreio || 'N/A' }}
+                </span>
+            </mat-cell>
+        </ng-container>
+
+        <!-- Descrição Column -->
+        <ng-container matColumnDef="descricaoConteudo">
+            <mat-header-cell *matHeaderCellDef>Descrição</mat-header-cell>
+            <mat-cell *matCellDef="let pacote" class="truncate-cell">
+                <span [title]="pacote.descricaoConteudo">{{ pacote.descricaoConteudo }}</span>
+            </mat-cell>
+        </ng-container>
+
+        <!-- Prioridade Column -->
+        <ng-container matColumnDef="prioridade">
+            <mat-header-cell *matHeaderCellDef>Prioridade</mat-header-cell>
+            <mat-cell *matCellDef="let pacote">
+                <mat-chip 
+                    [style.background-color]="getPrioridadeColor(pacote.prioridade)"
+                    [style.color]="'white'">
+                    {{ getPrioridadeText(pacote.prioridade) }}
+                </mat-chip>
+            </mat-cell>
+        </ng-container>
+
+        <!-- Headers e Rows -->
         <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
         <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
 
-        <!-- No data row -->
+        <!-- Estado vazio -->
         <tr class="mat-row" *matNoDataRow>
             <td class="mat-cell" [attr.colspan]="displayedColumns.length">
                 <div class="empty-state">
@@ -63,3 +103,4 @@
             </td>
         </tr>
     </mat-table>
+</div>

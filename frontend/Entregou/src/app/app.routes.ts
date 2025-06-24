@@ -10,14 +10,9 @@ import { roleGuard } from './guardRoutes/role.guard';
 export const routes: Routes = [
   {
     path: '',
-    component: UserDashboardComponent,
+    component: LandingPageComponent,
     title: 'Bem-vindo ao Entregou',
   },
-  // { Descomentar quando acabar testes de interface
-  //   path: '',
-  //   component: LandingPageComponent,
-  //   title: 'Bem-vindo ao Entregou',
-  // },
   {
     path: 'dashboard',
     component: DashboardComponent,
@@ -31,12 +26,12 @@ export const routes: Routes = [
 
     ]
   },
-  // { Descomentar quando acabar testes de interface
-  //   path: 'UserDashboard',
-  //   component: UserDashboardComponent,
-  //   canActivate: [authGuard, roleGuard], // Protege a rota do UserDashboard
-  //   title: 'User Dashboard - Entregou',
-  //   data: { role: 'CLIENTE' }, // Define o papel necessário para acessar o UserDashboard
-  // },
+  { 
+    path: 'UserDashboard',
+    component: UserDashboardComponent,
+    canActivate: [authGuard, roleGuard], // Protege a rota do UserDashboard
+    title: 'User Dashboard - Entregou',
+    data: { role: 'CLIENTE' }, // Define o papel necessário para acessar o UserDashboard
+  },
   { path: '**', redirectTo: '' }
 ];
