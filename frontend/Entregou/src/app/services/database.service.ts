@@ -1,12 +1,22 @@
 import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, tap } from 'rxjs';
+import { Observable, tap, of } from 'rxjs';
+import { debounceTime, distinctUntilChanged, switchMap, catchError } from 'rxjs/operators';
+
+
+
 
 interface RegisterRequest {
   nome: string;
   email: string;
   password: string;
   role: 'ADMIN' | 'MOTORISTA' | 'CLIENTE';
+}
+
+export interface UsuarioAutoComplete {
+  id: number;
+  nome: string;
+  email: string;
 }
 
 export interface LoginRequest {
@@ -37,9 +47,41 @@ export class DatabaseService {
       tap(response => {
         localStorage.setItem('token', response.token)
         localStorage.setItem('role', response.role);
-        })
-      );
+      })
+    );
   }
+
+  adicionarPacote(pacote: any): Observable<any> {
+    console.log('Pacote a ser adicionado:', pacote);
+    const token = localStorage.getItem('token');
+    const headers = { 'Authorization': `Bearer ${token}` };
+    return this.http.post(`${this.apiUrl}/pacotes`, pacote, { headers });
+  }
+
+  listarMeusPacotes(): Observable<any[]> {
+    const token = localStorage.getItem('token');
+    const headers = { 'Authorization': `Bearer ${token}` };
+    return this.http.get<any[]>(`${this.apiUrl}/pacotes/meusPacotes`, { headers });
+  }
+
+  buscarUsuarios(termo: string): Observable<UsuarioAutoComplete[]> {
+    const token = localStorage.getItem('token');
+    const headers = { 'Authorization': `Bearer ${token}` };
+    if (!termo.trim()) {
+      return of([]);
+    }
+
+    return this.http.get<UsuarioAutoComplete[]>(`${this.apiUrl}/api/usuarios/autocomplete?termo=${termo}`, { headers }).pipe(
+
+
+      catchError(error => {
+        console.error('Erro na busca de usuários:', error);
+        return of([]);
+      })
+    );
+  }
+
+
 
   logout(): void {
     localStorage.clear();

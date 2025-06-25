@@ -67,13 +67,13 @@ export class LoginFormComponent {
       next: (response) => {
         localStorage.setItem('token', response.token);
         localStorage.setItem('role', response.role);
-        this.router.navigate(['/dashboard']);
+        this.router.navigate(['/UserDashboard']);
         console.log('Login bem-sucedido:', response);
       },
       error: (error) => {
         this.isLoading = false;
         console.error('Erro ao fazer login:', error);
-        // Adicionar Mensagem de erro depois
+        // Adicionar Mensagem de erro depoisw
       },
       
     });
