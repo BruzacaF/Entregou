@@ -1,0 +1,16 @@
+<div class="logo">
+    <img src="assets/logo.png" alt="Entregou Logo" class="logo-image">
+    <span class="logo-text">Entregou</span>
+</div>
+<mat-divider ></mat-divider>
+<div class="navbar">
+    <mat-list>
+        @for (link of links; track link) {
+            <a mat-list-item [routerLink]="link.linkRoute"  type="">
+                <span>{{ link.name }}</span>
+                <mat-icon>{{ link.icon }}</mat-icon>
+            </a>
+        }
+    </mat-list>
+</div>
+

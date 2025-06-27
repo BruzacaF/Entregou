@@ -1,0 +1,53 @@
+// listar-pacote.component.scss
+@import '../../../styles/variables';
+
+.listar-pacote {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: auto;
+    padding: $padding;
+    gap: $padding;
+
+    border: 3px solid $text;
+    border-radius: $padding;
+    background-color: $cards;
+    box-shadow: $shadow;
+
+    .pacotes-table {
+        width: 100%;
+        height: 200px;
+        display: flex;
+        flex-direction: column;
+        overflow: auto;
+        max-height: calc(100% - 50%);
+
+        // Custom scrollbar styling for minimal look
+        &::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        &::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        &::-webkit-scrollbar-thumb {
+            background: rgba($text, 0.3);
+            border-radius: 4px;
+        }
+
+        &::-webkit-scrollbar-thumb:hover {
+            background: rgba($text, 0.5);
+        }
+
+        // Firefox scrollbar
+        scrollbar-width: thin;
+        scrollbar-color: rgba($text, 0.3) transparent;
+
+        mat-header-cell {
+            font-size: calc($font-default + 2px);
+            
+            color: $text;
+        }
+    }
+}
