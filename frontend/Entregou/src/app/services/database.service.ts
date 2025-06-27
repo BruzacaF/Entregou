@@ -6,10 +6,10 @@ import { debounceTime, distinctUntilChanged, switchMap, catchError } from 'rxjs/
 
 
 
-interface RegisterRequest {
+export interface RegisterRequest {
   nome: string;
   email: string;
-  password: string;
+  senha: string;
   role: 'ADMIN' | 'MOTORISTA' | 'CLIENTE';
 }
 
