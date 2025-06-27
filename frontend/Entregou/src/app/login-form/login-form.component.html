@@ -66,6 +66,13 @@
             <mat-icon class="button-icon" *ngIf="isLoading">hourglass_empty</mat-icon>
             <span>{{ isLoading ? 'Entrando...' : 'Entrar' }}</span>
           </button>
+          <button 
+            type="button"
+            class="cadastrar-button"
+            (click)="cadastrarUsuariosTeste()">
+            Cadastrar usuarios para teste
+            
+          </button>
 
         </div>
 

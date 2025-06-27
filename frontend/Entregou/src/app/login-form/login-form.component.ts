@@ -8,7 +8,9 @@ import { MatCardModule } from '@angular/material/card';
 import { Router } from '@angular/router';
 import { FormHandlerService, LoginFormData } from '../services/form-handler.service';
 import { DatabaseService } from '../services/database.service';
-import { LoginRequest } from '../services/database.service';
+import { LoginRequest, RegisterRequest } from '../services/database.service';
+import usuariosTeste from '../../../public/resources/staticResources/usuariosRegister';
+
 
 
 @Component({
@@ -30,6 +32,7 @@ export class LoginFormComponent {
   private AuthService = inject(DatabaseService);
   private formHandler = inject(FormHandlerService);
   private router = inject(Router);
+
 
   touchedFields = signal<Set<keyof LoginFormData>>(new Set());
 
@@ -107,4 +110,26 @@ export class LoginFormComponent {
   getError(field: keyof LoginFormData): string | null {
     return this.formHandler.getFieldError(field);
   }
+
+  cadastrarUsuariosTeste(): void {
+    usuariosTeste.forEach((usuario: RegisterRequest) => {
+      const registerData: RegisterRequest = {
+        nome: usuario.nome,
+        email: usuario.email,
+        senha: usuario.senha,
+        role: usuario.role
+      };
+
+      this.AuthService.register(registerData).subscribe({
+        next: (response) => {
+          console.log('Usuário cadastrado com sucesso:', response);
+        },
+        error: (error) => {
+          console.error('Erro ao cadastrar usuário:', error);
+        }
+      });
+    });
+  }
+
+  
 }
