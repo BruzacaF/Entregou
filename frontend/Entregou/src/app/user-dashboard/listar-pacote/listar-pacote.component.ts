@@ -5,7 +5,9 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { DatabaseService } from '../../services/database.service';
+import { ModalConfirmacaoComponent, ConfirmDeleteData } from '../modal-confirmacao/modal-confirmacao.component';
 
 export interface Pacote {
   id: number;
@@ -29,7 +31,8 @@ export interface Pacote {
     MatIconModule,
     MatButtonModule,
     MatChipsModule,
-    MatSnackBarModule
+    MatSnackBarModule,
+    MatDialogModule
   ],
   templateUrl: './listar-pacote.component.html',
   styleUrls: ['./listar-pacote.component.scss']
@@ -60,7 +63,8 @@ export class ListarPacoteComponent implements OnInit {
 
   constructor(
     private databaseService: DatabaseService,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private dialog: MatDialog
   ) {}
 
   ngOnInit(): void {
@@ -138,32 +142,52 @@ export class ListarPacoteComponent implements OnInit {
       return;
     }
 
-    if (confirm(`Tem certeza que deseja apagar o pacote para ${pacote.destinatario}?`)) {
-      this._deleting.set(pacote.id);
+    // Configura os dados do modal
+    const dialogData: ConfirmDeleteData = {
+      destinatario: pacote.destinatario,
+      titulo: 'Confirmar Exclusão do Pacote',
+      mensagem: 'Tem certeza que deseja apagar o pacote para:'
+    };
 
-      this.databaseService.apagarPacote(pacote.id).subscribe({
-        next: () => {
-          // Remove o pacote da lista local
-          const pacotesAtuais = this._pacotes();
-          const novosPacotes = pacotesAtuais.filter(p => p.id !== pacote.id);
-          this._pacotes.set(novosPacotes);
+    // Abre o modal de confirmação
+    const dialogRef = this.dialog.open(ModalConfirmacaoComponent, {
+      data: dialogData,
+      disableClose: true,
+      autoFocus: false,
+      restoreFocus: false,
+      width: '450px',
+      panelClass: ['custom-dialog-container']
+    });
 
-          this.snackBar.open('Pacote apagado com sucesso!', 'Fechar', {
-            duration: 3000,
-            panelClass: ['success-snackbar']
-          });
-          this._deleting.set(null);
-        },
-        error: (error) => {
-          console.error('Erro ao apagar pacote:', error);
-          this.snackBar.open('Erro ao apagar pacote. Tente novamente.', 'Fechar', {
-            duration: 3000,
-            panelClass: ['error-snackbar']
-          });
-          this._deleting.set(null);
-        }
-      });
-    }
+    // Processa o resultado do modal
+    dialogRef.afterClosed().subscribe(confirmed => {
+      if (confirmed && pacote.id) {
+        this._deleting.set(pacote.id);
+
+        this.databaseService.apagarPacote(pacote.id).subscribe({
+          next: () => {
+            // Remove o pacote da lista local
+            const pacotesAtuais = this._pacotes();
+            const novosPacotes = pacotesAtuais.filter(p => p.id !== pacote.id);
+            this._pacotes.set(novosPacotes);
+
+            this.snackBar.open('Pacote apagado com sucesso!', 'Fechar', {
+              duration: 3000,
+              panelClass: ['success-snackbar']
+            });
+            this._deleting.set(null);
+          },
+          error: (error) => {
+            console.error('Erro ao apagar pacote:', error);
+            this.snackBar.open('Erro ao apagar pacote. Tente novamente.', 'Fechar', {
+              duration: 3000,
+              panelClass: ['error-snackbar']
+            });
+            this._deleting.set(null);
+          }
+        });
+      }
+    });
   }
 
   isDeletingPacote(id?: number): boolean {
