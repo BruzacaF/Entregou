@@ -4,10 +4,13 @@ import { MatTableModule } from '@angular/material/table';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatChipsModule } from '@angular/material/chips';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { DatabaseService } from '../../services/database.service';
+import { ModalConfirmacaoComponent, ConfirmDeleteData } from '../modal-confirmacao/modal-confirmacao.component';
 
 export interface Pacote {
-  id?: number;
+  id: number;
   destinatario: string;
   remetente: string;
   tipoPacote: string;
@@ -27,7 +30,9 @@ export interface Pacote {
     MatTableModule,
     MatIconModule,
     MatButtonModule,
-    MatChipsModule
+    MatChipsModule,
+    MatSnackBarModule,
+    MatDialogModule
   ],
   templateUrl: './listar-pacote.component.html',
   styleUrls: ['./listar-pacote.component.scss']
@@ -37,6 +42,7 @@ export class ListarPacoteComponent implements OnInit {
   private _pacotes = signal<Pacote[]>([]);
   private _loading = signal<boolean>(false);
   private _error = signal<string | null>(null);
+  private _deleting = signal<number | null>(null);
 
   // Getter para usar no template (converte Signal para Array)
   get pacotes(): Pacote[] {
@@ -51,7 +57,15 @@ export class ListarPacoteComponent implements OnInit {
     return this._error();
   }
 
-  constructor(private databaseService: DatabaseService) {}
+  get deleting(): number | null {
+    return this._deleting();
+  }
+
+  constructor(
+    private databaseService: DatabaseService,
+    private snackBar: MatSnackBar,
+    private dialog: MatDialog
+  ) {}
 
   ngOnInit(): void {
     this.carregarPacotes();
@@ -82,6 +96,7 @@ export class ListarPacoteComponent implements OnInit {
     'codigoRastreio',
     'descricaoConteudo',
     'prioridade',
+    'acoes'
   ];
 
   // Método para recarregar os dados
@@ -116,5 +131,66 @@ export class ListarPacoteComponent implements OnInit {
       case 'cancelado': return 'Cancelado';
       default: return 'N/A';
     }
+  }
+
+  apagarPacote(pacote: Pacote): void {
+    if (!pacote.id) {
+      this.snackBar.open('Erro: ID do pacote não encontrado', 'Fechar', {
+        duration: 3000,
+        panelClass: ['error-snackbar']
+      });
+      return;
+    }
+
+    // Configura os dados do modal
+    const dialogData: ConfirmDeleteData = {
+      destinatario: pacote.destinatario,
+      titulo: 'Confirmar Exclusão do Pacote',
+      mensagem: 'Tem certeza que deseja apagar o pacote para:'
+    };
+
+    // Abre o modal de confirmação
+    const dialogRef = this.dialog.open(ModalConfirmacaoComponent, {
+      data: dialogData,
+      disableClose: true,
+      autoFocus: false,
+      restoreFocus: false,
+      width: '450px',
+      panelClass: ['custom-dialog-container']
+    });
+
+    // Processa o resultado do modal
+    dialogRef.afterClosed().subscribe(confirmed => {
+      if (confirmed && pacote.id) {
+        this._deleting.set(pacote.id);
+
+        this.databaseService.apagarPacote(pacote.id).subscribe({
+          next: () => {
+            // Remove o pacote da lista local
+            const pacotesAtuais = this._pacotes();
+            const novosPacotes = pacotesAtuais.filter(p => p.id !== pacote.id);
+            this._pacotes.set(novosPacotes);
+
+            this.snackBar.open('Pacote apagado com sucesso!', 'Fechar', {
+              duration: 3000,
+              panelClass: ['success-snackbar']
+            });
+            this._deleting.set(null);
+          },
+          error: (error) => {
+            console.error('Erro ao apagar pacote:', error);
+            this.snackBar.open('Erro ao apagar pacote. Tente novamente.', 'Fechar', {
+              duration: 3000,
+              panelClass: ['error-snackbar']
+            });
+            this._deleting.set(null);
+          }
+        });
+      }
+    });
+  }
+
+  isDeletingPacote(id?: number): boolean {
+    return this.deleting === id;
   }
 }

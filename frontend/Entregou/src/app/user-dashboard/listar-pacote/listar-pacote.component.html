@@ -2,11 +2,11 @@
     <div class="header">
         <h1>Lista de Pacotes</h1>
         <p>Todos os seus pacotes estão listados aqui.</p>
-        
-        <button 
-            mat-raised-button 
-            color="primary" 
-            (click)="recarregar()" 
+
+        <button
+            mat-raised-button
+            color="primary"
+            (click)="recarregar()"
             [disabled]="loading"
             class="reload-btn">
             <mat-icon>refresh</mat-icon>
@@ -30,11 +30,11 @@
     </div>
 
     <!-- Tabela de Pacotes -->
-    <mat-table 
-        *ngIf="!loading && !error" 
-        [dataSource]="pacotes" 
+    <mat-table
+        *ngIf="!loading && !error"
+        [dataSource]="pacotes"
         class="pacotes-table mat-elevation-8">
-        
+
         <!-- Destinatário Column -->
         <ng-container matColumnDef="destinatario">
             <mat-header-cell *matHeaderCellDef>Destinatário</mat-header-cell>
@@ -81,11 +81,28 @@
         <ng-container matColumnDef="prioridade">
             <mat-header-cell *matHeaderCellDef>Prioridade</mat-header-cell>
             <mat-cell *matCellDef="let pacote">
-                <mat-chip 
+                <mat-chip
                     [style.background-color]="getPrioridadeColor(pacote.prioridade)"
                     [style.color]="'white'">
                     {{ getPrioridadeText(pacote.prioridade) }}
                 </mat-chip>
+            </mat-cell>
+        </ng-container>
+
+        <!-- Ações Column -->
+        <ng-container matColumnDef="acoes">
+            <mat-header-cell *matHeaderCellDef>Ações</mat-header-cell>
+            <mat-cell *matCellDef="let pacote" class="acoes-cell">
+                <button
+                    mat-icon-button
+                    color="warn"
+                    (click)="apagarPacote(pacote)"
+                    [disabled]="isDeletingPacote(pacote.id)"
+                    [title]="isDeletingPacote(pacote.id) ? 'Apagando...' : 'Apagar pacote'"
+                    class="delete-btn">
+                    <mat-icon *ngIf="!isDeletingPacote(pacote.id)">delete</mat-icon>
+                    <mat-icon *ngIf="isDeletingPacote(pacote.id)" class="loading-icon">hourglass_empty</mat-icon>
+                </button>
             </mat-cell>
         </ng-container>
 

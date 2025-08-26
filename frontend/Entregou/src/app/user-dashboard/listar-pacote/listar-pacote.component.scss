@@ -46,8 +46,81 @@
 
         mat-header-cell {
             font-size: calc($font-default + 2px);
-            
             color: $text;
         }
+
+        .acoes-cell {
+            width: 80px;
+            text-align: center;
+
+            .delete-btn {
+                transition: all 0.2s ease;
+
+                &:hover:not(:disabled) {
+                    background-color: rgba(244, 67, 54, 0.1);
+                    transform: scale(1.1);
+                }
+
+                &:disabled {
+                    opacity: 0.5;
+                    cursor: not-allowed;
+                }
+
+                .loading-icon {
+                    animation: spin 1s linear infinite;
+                }
+            }
+        }
+    }
+}
+
+// Animation for loading icon
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+// Snackbar styles
+:host ::ng-deep {
+    .success-snackbar {
+        background-color: #4caf50 !important;
+        color: white !important;
+    }
+
+    .error-snackbar {
+        background-color: #f44336 !important;
+        color: white !important;
+    }
+
+    // Estilos personalizados para o modal
+    .custom-dialog-container {
+        .mat-mdc-dialog-container {
+            .mdc-dialog__surface {
+                border-radius: 16px;
+                box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
+                overflow: hidden;
+
+                .mat-mdc-dialog-content {
+                    padding: 0;
+                    max-height: none;
+                }
+
+                .mat-mdc-dialog-actions {
+                    padding: 0;
+                    margin: 0;
+                    min-height: auto;
+                }
+            }
+        }
+    }
+
+    // Backdrop mais escuro
+    .cdk-overlay-backdrop {
+        background-color: rgba(0, 0, 0, 0.6) !important;
+        backdrop-filter: blur(2px);
     }
 }
