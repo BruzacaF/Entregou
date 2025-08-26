@@ -46,8 +46,53 @@
 
         mat-header-cell {
             font-size: calc($font-default + 2px);
-            
+
             color: $text;
         }
+
+        .acoes-cell {
+            width: 80px;
+            text-align: center;
+
+            .delete-btn {
+                transition: all 0.2s ease;
+
+                &:hover:not(:disabled) {
+                    background-color: rgba(244, 67, 54, 0.1);
+                    transform: scale(1.1);
+                }
+
+                &:disabled {
+                    opacity: 0.5;
+                }
+
+                .loading-icon {
+                    animation: spin 1s linear infinite;
+                }
+            }
+        }
+    }
+}
+
+// Animation for loading icon
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+// Snackbar styles
+:host ::ng-deep {
+    .success-snackbar {
+        background-color: #4caf50 !important;
+        color: white !important;
+    }
+
+    .error-snackbar {
+        background-color: #f44336 !important;
+        color: white !important;
     }
 }

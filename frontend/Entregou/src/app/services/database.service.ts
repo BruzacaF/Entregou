@@ -64,6 +64,12 @@ export class DatabaseService {
     return this.http.get<any[]>(`${this.apiUrl}/pacotes/meusPacotes`, { headers });
   }
 
+  apagarPacote(id: number): Observable<any> {
+    const token = localStorage.getItem('token');
+    const headers = { 'Authorization': `Bearer ${token}` };
+    return this.http.delete(`${this.apiUrl}/pacotes/${id}`, { headers });
+  }
+
   buscarUsuarios(termo: string): Observable<UsuarioAutoComplete[]> {
     const token = localStorage.getItem('token');
     const headers = { 'Authorization': `Bearer ${token}` };
